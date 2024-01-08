@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance Tracker</title>
+    <link rel="stylesheet" href="MainStyle.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Finance Tracker</h1>
+    </div>
+    <div class="balance-section">
+      <h2>Your Balance:</h2>
+      <br />
+      <h3
+        id="balanceValue"
+        th:text="${authenticatedUser.balance}+ ' &euro;'"
+      ></h3>
+      <button
+        class="button-30"
+        id="editButton"
+        role="button"
+        onclick="enableBalanceEditing()"
+      >
+        Edit Balance
+      </button>
+      <form
+        id="balanceForm"
+        style="display: none"
+        onsubmit="updateBalance(); return false;"
+      >
+        <input
+          type="number"
+          id="currentBalance"
+          name="currentBalance"
+          step="any"
+        />
+        <button type="submit">Save</button>
+      </form>
+    </div>
+    <div class="history-section">
+      <h2>History</h2>
+      <table id="transactionTable">
+        <!-- /********************************************************/
+        /*****************Generate Rows in here******************/
+        /********************************************************/ -->
+
+        <th:block th:each="transaction : ${transactions}">
+          <tr>
+            <td th:text="${transaction.getItem()}"></td>
+            <td th:text="${transaction.getAmount()} + ' &euro;'"></td>
+          </tr>
+        </th:block>
+
+        <!-- /********************************************************/
+        /*****************Generate Rows in here******************/
+        /********************************************************/ -->
+      </table>
+      <button id="deleteButton" onclick="deleteLastTransaction()">
+        Delete
+      </button>
+    </div>
+    <div class="footer">
+      <form id="transactionForm" action="/addTransaction" method="post">
+        <label for="item">Transaction:</label><br />
+        <input
+          type="text"
+          id="item"
+          name="item"
+          placeholder="Groceries, shoes, etc."
+        /><br /><br />
+        <label for="item">Amount:</label><br />
+        <input
+          type="number"
+          id="amount"
+          name="amount"
+          placeholder="e.g. 10€"
+        /><br /><br />
+        <input
+          type="hidden"
+          id="balanceValue"
+          name="balanceValue"
+          th:value="${authenticatedUser.balance}"
+        />
+
+        <button type="submit" id="submitButton">Add new transaction</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    function enableBalanceEditing() {
+      document.getElementById("balanceValue").style.display = "none";
+      document.getElementById("editButton").style.display = "none";
+      document.getElementById("balanceForm").style.display = "block";
+      document.getElementById("currentBalance").value = parseFloat(
+        document.getElementById("balanceValue").innerText
+      );
+    }
+
+    function updateBalance() {
+      var currentBalance = document.getElementById("currentBalance").value;
+
+      var form = document.getElementById("balanceForm");
+      form.action = "/updateBalance";
+      form.method = "POST";
+      form.submit();
+    }
+
+    function deleteLastTransaction() {
+      var form = document.createElement("form");
+      form.method = "POST";
+      form.action = "/deleteLastTransaction";
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+  </script>
+</html>
