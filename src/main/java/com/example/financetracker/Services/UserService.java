@@ -21,8 +21,8 @@ public class UserService {
 
         if (userRepo.count() == 0) {
             userRepo.save(new UserEnt("admin", "admin"));
-            userRepo.save(new UserEnt("user1", "123"));
-            userRepo.save(new UserEnt("user2", "123"));
+            userRepo.save(new UserEnt("secondUser", "123"));
+            userRepo.save(new UserEnt("thirdUser", "123"));
         }
     }
 
